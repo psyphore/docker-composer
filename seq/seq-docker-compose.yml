@@ -1,0 +1,22 @@
+# https://hub.docker.com/r/datalust/seq
+# https://docs.datalust.co/docs/getting-started-with-docker
+# docker-compose -f seq-docker-compose.yml up --force-recreate --build -d --memory=8g --memory-swap=8g
+# docker-compose -f seq-docker-compose.yml down
+# used tags: latest
+
+version: "3"
+
+services:
+  seq-server:
+    container_name: seq-latest
+    image: datalust/seq:latest
+    volumes:
+      - ${SEQ_DATA_PATH}:/data
+    ports:
+      - ${SEQ_UI_PORT}:80
+      - ${SEQ_API_PORT}:5341
+    environment:
+      ACCEPT_EULA: ${SEQ_ACCEPT_LICENSE_AGREEMENT}
+    restart: unless-stopped
+    mem_limit: ${SEQ_MEM_LIMIT}
+    # mem_swap: ${SEQ_MEM_SWAP}
