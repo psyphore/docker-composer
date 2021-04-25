@@ -1,6 +1,6 @@
 # https://neo4j.com/docs/operations-manual/current/installation/docker/
-# docker-compose -f neo4j-docker-compose.yml up --force-recreate --build -d
-# docker-compose -f neo4j-docker-compose.yml down
+# docker-compose -f docker-compose.yml up --force-recreate --build -d
+# docker-compose -f docker-compose.yml down
 # used tags: 4.2-enterprise
 # GraphiQL plugin - https://github.com/neo4j-graphql/neo4j-graphql
 
@@ -11,13 +11,13 @@ services:
     container_name: n4j-42-e
     image: neo4j:4.2-enterprise
     volumes:
-      - c:\dkr\neo4j\data:/var/lib/neo4j/data
-      - c:\dkr\neo4j\logs:/logs
-      - c:\dkr\neo4j\conf:/var/lib/neo4j/conf
-      - c:\dkr\neo4j\plugins:/plugins
-      - c:\dkr\neo4j\import:/var/lib/neo4j/import
-      - c:\dkr\neo4j\certificates:/var/lib/neo4j/certificates
-      - c:\dkr\neo4j\run:/var/lib/neo4j/run
+      - ${NEO4J_path}\data:/var/lib/neo4j/data
+      - ${NEO4J_path}\logs:/logs
+      - ${NEO4J_path}\conf:/var/lib/neo4j/conf
+      - ${NEO4J_path}\plugins:/plugins
+      - ${NEO4J_path}\import:/var/lib/neo4j/import
+      - ${NEO4J_path}\certificates:/var/lib/neo4j/certificates
+      - ${NEO4J_path}\run:/var/lib/neo4j/run
     ports:
       - ${NEO4J_HTTP}:7474   # Http protocol - Used by the Neo4j Browser. Also used by REST API. (Development)
       - ${NEO4J_BOLT}:7687   # Bolt protocol - Used by Cypher Shell and by the Neo4j Browser.
@@ -25,19 +25,13 @@ services:
     environment:
       NEO4J_AUTH: ${NEO4J_AUTH}
       NEO4J_ACCEPT_LICENSE_AGREEMENT: ${NEO4J_ACCEPT_LICENSE_AGREEMENT}
-      # NEO4J_database_name: ${NEO4J_database_name}
       NEO4J_dbms_security_procedures_unrestricted: ${NEO4J_dbms_security_procedures_unrestricted}
       NEO4J_dbms_security_procedures_whitelist: ${NEO4J_dbms_security_procedures_whitelist}
+      NEO4J_dbms_allow_upgrade: ${NEO4J_dbms_allow_upgrade}
+      NEO4J_dbms_backup_enabled: ${NEO4J_dbms_backup_enabled}
       NEO4J_apoc_export_file_enabled: ${NEO4J_apoc_export_file_enabled}
       NEO4J_apoc_import_file_enabled: ${NEO4J_apoc_import_file_enabled}
       NEO4J_apoc_import_file_use__neo4j__config: ${NEO4J_apoc_import_file_use__neo4j__config}
       NEO4JLABS_PLUGINS: ${NEO4JLABS_PLUGINS}
       NEO4J_dbms_memory_pagecache_size: ${NEO4J_dbms_memory_pagecache_size}
-      # NEO4J_fabric_database_name: ${NEO4J_fabric_database_name}
-      # NEO4J_fabric_graph_0_database: ${NEO4J_fabric_graph_0_database}
-      # NEO4J_fabric_graph_0_name: ${NEO4J_fabric_graph_0_name}
-      # NEO4J_fabric_graph_0_uri: ${NEO4J_fabric_graph_0_uri}
-      # NEO4J_fabric_graph_1_database: ${NEO4J_fabric_graph_1_database}
-      # NEO4J_fabric_graph_1_name: ${NEO4J_fabric_graph_1_name}
-      # NEO4J_fabric_graph_1_uri: ${NEO4J_fabric_graph_1_uri}
     restart: unless-stopped
