@@ -8,7 +8,7 @@ module.exports = strapi => {
       strapi.app.use(async (ctx, next) =>{
         cors({
           allowedHeaders: '*',
-          origin: ['http://localhost']
+          origin: ['http://localhost:1339', 'http://localhost:4201']
         })
         await next();
       })
