@@ -47,3 +47,10 @@ services:
       ACCEPT_EULA: ${SEQ_ACCEPT_LICENSE_AGREEMENT}
     restart: unless-stopped
     mem_limit: ${SEQ_MEM_LIMIT}
+
+  identity:
+    container_name: idsvr_d
+    image: rcwowbagger/identityserver:dev
+    ports:
+      - ${ID_PORT}:80
+    restart: unless-stopped
