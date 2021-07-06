@@ -1,7 +1,11 @@
-# docker-compose -f docker-compose.yml up --force-recreate --build -d
-# docker-compose -f docker-compose.yml down
+# docker compose -f docker-compose.yml up --force-recreate --build -d
 
-version: "3.6"
+# docker compose -f docker-compose.yml build [services]
+# docker compose -f docker-compose.yml up --no-deps -d [services]
+
+# docker compose -f docker-compose.yml down
+
+version: "3.9"
 
 services:
   strapi:
@@ -39,6 +43,17 @@ services:
       - strapidata:/data/db
     ports:
       - "27017:27017"
+
+  # ui:
+  #   container_name: qa_ui
+  #   image: localhost:5999/qa:ui
+  #   ports:
+  #     - ${APP_PORT}:80
+  #   networks:
+  #     - strapi-app-network
+  #   depends_on: 
+  #     - stapi
+  #   restart: unless-stopped
 
 networks:
   strapi-app-network:

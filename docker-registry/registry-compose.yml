@@ -1,6 +1,6 @@
 # https://hub.docker.com/_/registry
-# docker-compose -f registry-compose.yml up --force-recreate --build -d
-# docker-compose -f registry-compose.yml down
+# docker compose -f registry-compose.yml up --force-recreate --build -d
+# docker compose -f registry-compose.yml down
 # used tags: 2.7.1
 
 version: "3"
