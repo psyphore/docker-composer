@@ -10,15 +10,15 @@ version: "3.9"
 services:
   db-server:
     container_name: n4j-e
-    image: neo4j:4.2-enterprise
-    volumes:
-      - ${NEO4J_path}\data:/var/lib/neo4j/data
-      - ${NEO4J_path}\logs:/var/lib/neo4j/logs
-      - ${NEO4J_path}\conf:/var/lib/neo4j/conf
-      - ${NEO4J_path}\plugins:/var/lib/neo4j/plugins
-      - ${NEO4J_path}\import:/var/lib/neo4j/import
-      - ${NEO4J_path}\certificates:/var/lib/neo4j/certificates
-      - ${NEO4J_path}\run:/var/lib/neo4j/run
+    image: neo4j:4.4-enterprise
+    # volumes:
+      # - ${NEO4J_path}\data:/var/lib/neo4j/data
+      # - ${NEO4J_path}\logs:/var/lib/neo4j/logs
+      # - ${NEO4J_path}\conf:/var/lib/neo4j/conf
+      # - ${NEO4J_path}\plugins:/var/lib/neo4j/plugins
+      # - ${NEO4J_path}\import:/var/lib/neo4j/import
+      # - ${NEO4J_path}\certificates:/var/lib/neo4j/certificates
+      # - ${NEO4J_path}\run:/var/lib/neo4j/run
     ports:
       - ${NEO4J_HTTP}:7474   # Http protocol - Used by the Neo4j Browser. Also used by REST API. (Development)
       - ${NEO4J_BOLT}:7687   # Bolt protocol - Used by Cypher Shell and by the Neo4j Browser.
