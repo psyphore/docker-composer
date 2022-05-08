@@ -1,0 +1,12 @@
+#  docker compose -f docker-compose.yml up --force-recreate --build -d
+
+version: '3.9'
+
+services:
+  email:
+    container_name: dev-mail
+    image: mailhog/mailhog:latest
+    restart: unless-stopped
+    ports:
+      - 1025:1025 # SMTP
+      - 8025:8025 # UI
