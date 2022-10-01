@@ -1,25 +1,15 @@
-# docker compose -f docker-compose.yml up --force-recreate --build -d
-
-# docker compose -f docker-compose.yml build [services]
-# docker compose -f docker-compose.yml up --no-deps -d [services]
-
-# docker compose -f docker-compose.yml down
+# podman-compose up --force-recreate --build -d
+# podman-compose build [services]
+# podman-compose up --no-deps -d [services]
+# podman-compose down
 
 version: "3.9"
-
-# networks:
-#   infrastructure:
-#   frontend:
-#   backend:
-
-# volumes: 
-#   n4j:
-
+  
 services:
 
   database:
     container_name: n4j-e
-    image: docker.io/neo4j:4.4-enterprise
+    image: docker.io/library/neo4j:enterprise
     # volumes:
     #   - ${NEO4J_path}\data:/var/lib/neo4j/data
     #   - ${NEO4J_path}\logs:/var/lib/neo4j/logs
@@ -66,9 +56,8 @@ services:
       - ${SEQ_HTTPS_API_PORT}:45341
     environment:
       - ACCEPT_EULA=Y
+      - SEQ_FIRSTRUN_ADMINPASSWORD=${SEQ_FIRSTRUN_ADMINPASSWORD}
     restart: unless-stopped
-    depends_on: 
-      - cache
 
   cache:
     container_name: cache
@@ -86,37 +75,3 @@ services:
     environment:
       - MH_HOSTNAME=thumbezatech.masngwabisane
       - MH_CORS_ORIGIN=*
-
-  zookeeper:
-    container_name: zookeeper
-    image: docker.io/confluentinc/cp-zookeeper:7.1.1
-    hostname: zookeeper
-    restart: unless-stopped
-    environment:
-      ZOOKEEPER_CLIENT_PORT: 2181
-      ZOOKEEPER_TICK_TIME: 2000
-
-  broker:
-    container_name: broker
-    image: docker.io/confluentinc/cp-kafka:7.1.1
-    restart: unless-stopped
-    command: ["kafka-topics", "--create", "--topic purchases", "--topic purchases-ack", "--bootstrap-server localhost:9092", "--replication-factor 1", "--partitions 1"]
-    ports:
-      - ${KAFKA_BROKER_PORT}:9092
-    depends_on:
-      - zookeeper
-    environment:
-      KAFKA_BROKER_ID: 1
-      KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:${KAFKA_ZOOKEPPER_PORT}'
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_INTERNAL:PLAINTEXT
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092,PLAINTEXT_INTERNAL://broker:29092
-      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
-      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
-
-  akhq:
-    container_name: kafka-ui
-    image: docker.io/tchiotludo/akhq:latest
-    restart: unless-stopped
-    ports:
-      - ${KAFKA_UI_PORT}:8080
