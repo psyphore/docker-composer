@@ -9,7 +9,7 @@ services:
 
   database:
     container_name: n4j-e
-    image: docker.io/library/neo4j:enterprise
+    image: docker.io/library/neo4j:5.1.0-enterprise
     # volumes:
     #   - ${NEO4J_path}\data:/var/lib/neo4j/data
     #   - ${NEO4J_path}\logs:/var/lib/neo4j/logs
