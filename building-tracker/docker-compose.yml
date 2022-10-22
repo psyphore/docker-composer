@@ -8,8 +8,8 @@ version: "3.9"
 services:
 
   db-2:
-    container_name: pg14
-    image: postgres:14-alpine
+    container_name: pg15
+    image: postgres:15-alpine
     ports:
       - 5432:5432
     restart: unless-stopped
