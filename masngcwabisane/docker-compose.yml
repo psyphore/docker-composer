@@ -1,30 +1,27 @@
-# docker compose -f docker-compose.yml up --force-recreate --build -d
-
-# docker compose -f docker-compose.yml build [services]
-# docker compose -f docker-compose.yml up --no-deps -d [services]
-
-# docker compose -f docker-compose.yml down
+# podman-compose up --force-recreate --build -d
+# podman-compose build [services]
+# podman-compose up --no-deps -d [services]
+# podman-compose down
 
 version: "3.9"
-
+  
 services:
-  db-server:
+
+  database:
     container_name: n4j-e
-    image: neo4j:4.4-enterprise
+    image: docker.io/library/neo4j:5.1.0-enterprise
     # volumes:
-      # - ${NEO4J_path}\data:/var/lib/neo4j/data
-      # - ${NEO4J_path}\logs:/var/lib/neo4j/logs
-      # - ${NEO4J_path}\conf:/var/lib/neo4j/conf
-      # - ${NEO4J_path}\plugins:/var/lib/neo4j/plugins
-      # - ${NEO4J_path}\import:/var/lib/neo4j/import
-      # - ${NEO4J_path}\certificates:/var/lib/neo4j/certificates
-      # - ${NEO4J_path}\run:/var/lib/neo4j/run
+    #   - ${NEO4J_path}\data:/var/lib/neo4j/data
+    #   - ${NEO4J_path}\logs:/var/lib/neo4j/logs
+    #   - ${NEO4J_path}\conf:/var/lib/neo4j/conf
+    #   - ${NEO4J_path}\plugins:/var/lib/neo4j/plugins
+    #   - ${NEO4J_path}\import:/var/lib/neo4j/import
+    #   - ${NEO4J_path}\certificates:/var/lib/neo4j/certificates
+    #   - ${NEO4J_path}\run:/var/lib/neo4j/run
     ports:
       - ${NEO4J_HTTP}:7474   # Http protocol - Used by the Neo4j Browser. Also used by REST API. (Development)
       - ${NEO4J_BOLT}:7687   # Bolt protocol - Used by Cypher Shell and by the Neo4j Browser.
       # - ${NEO4J_HTTPS}:7473  # Https protocol - Used by the Neo4j Browser. Also used by REST API. (Production)
-    networks:
-      - infrastructure
     environment:
       - NEO4J_ACCEPT_LICENSE_AGREEMENT=$NEO4J_ACCEPT_LICENSE_AGREEMENT
       - NEO4J_AUTH=$NEO4J_AUTH
@@ -39,39 +36,42 @@ services:
       - NEO4J_dbms_memory_pagecache_size=$NEO4J_dbms_memory_pagecache_size
     restart: unless-stopped
     depends_on: 
-      - seq-metrics
+      - telemetry
   
-  seq-metrics:
+  bpm:
+    container_name: worklow
+    image: docker.io/camunda/camunda-bpm-platform:latest
+    command: './camunda.sh --rest --webapps --swaggerui'
+    restart: unless-stopped
+    ports:
+      - 8081:8080
+
+  telemetry:
     container_name: seq-metrics
-    image: datalust/seq:latest
-    volumes:
-      - ${SEQ_DATA_PATH}:/data
-    networks:
-      - infrastructure
+    image: docker.io/datalust/seq:latest
     ports:
       - ${SEQ_UI_PORT}:80
       - ${SEQ_API_PORT}:5341
+      - ${SEQ_HTTPS_UI_PORT}:443
+      - ${SEQ_HTTPS_API_PORT}:45341
     environment:
-      - ACCEPT_EULA=$SEQ_ACCEPT_LICENSE_AGREEMENT
+      - ACCEPT_EULA=Y
+      - SEQ_FIRSTRUN_ADMINPASSWORD=${SEQ_FIRSTRUN_ADMINPASSWORD}
     restart: unless-stopped
-    # mem_limit: ${SEQ_MEM_LIMIT}
-    depends_on: 
-      - cache
 
   cache:
     container_name: cache
-    image: redis:alpine
-    networks:
-      - infrastructure
+    image: docker.io/redis:alpine
     command: ${REDIS_ARGS}
-    volumes: 
-      - ${REDIS_DATA}:/data
     restart: unless-stopped
 
-networks:
-  infrastructure:
-  frontend:
-  backend:
-
-# volumes: 
-#   n4j:
+  mail-server:
+    container_name: email
+    image: docker.io/mailhog/mailhog:latest
+    restart: unless-stopped
+    ports:
+      - 1025:1025
+      - 8025:8025
+    environment:
+      - MH_HOSTNAME=thumbezatech.masngwabisane
+      - MH_CORS_ORIGIN=*
